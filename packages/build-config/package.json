@@ -1,0 +1,35 @@
+{
+  "name": "@demo/build-config",
+  "version": "0.1.0",
+  "description": "域内共享构建配置：qiankun Vite 插件、微应用注册表、Vite 配置工厂",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./apps": {
+      "types": "./types/apps.d.ts",
+      "default": "./src/apps.mjs"
+    }
+  },
+  "files": ["src", "types"],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "typecheck": "echo \"[@demo/build-config] 纯 ESM + 手写 d.ts，无需 tsc\" && exit 0"
+  },
+  "peerDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "vite-plugin-qiankun": "^1.0.15"
+  },
+  "devDependencies": {
+    "vite": "catalog:"
+  },
+  "keywords": ["qiankun", "vite", "micro-frontend"]
+}

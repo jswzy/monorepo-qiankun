@@ -1,0 +1,57 @@
+{
+  "name": "@demo/ui-package",
+  "version": "0.1.0",
+  "description": "域内跨框架 UI 组件库：一套设计令牌 + Vue3 / Vue2 / React 三套实现",
+  "type": "module",
+  "sideEffects": ["*.css"],
+  "//": [
+    "按框架拆分子路径导出：vue3 应用只会打包 vue3 实现，react 应用只会打包 react 实现，",
+    "彼此不会互相污染依赖；样式则三端共用同一份 CSS，保证视觉完全一致。",
+    "入口指向源码 → 改组件，子应用 HMR 立即生效 + TS 类型直达源码。"
+  ],
+  "exports": {
+    "./styles.css": "./src/styles/index.css",
+    "./vue3": {
+      "types": "./src/vue3/index.ts",
+      "default": "./src/vue3/index.ts"
+    },
+    "./vue2": {
+      "types": "./src/vue2/index.ts",
+      "default": "./src/vue2/index.ts"
+    },
+    "./react": {
+      "types": "./src/react/index.ts",
+      "default": "./src/react/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "src"],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "echo \"[@demo/ui-package] 源码分发包（域内直连源码），由各应用自行编译，无需单独构建产物\" && exit 0"
+  },
+  "dependencies": {
+    "@demo/shared-utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "vue": "^2.7.0 || ^3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": { "optional": true },
+    "react": { "optional": true },
+    "react-dom": { "optional": true }
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vue": "catalog:"
+  }
+}

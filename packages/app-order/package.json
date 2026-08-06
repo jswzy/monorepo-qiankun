@@ -1,0 +1,26 @@
+{
+  "name": "@demo/app-order",
+  "version": "0.0.0",
+  "private": true,
+  "description": "订单中心微应用 · Vue 2.7",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@demo/shared-utils": "workspace:*",
+    "@demo/ui-package": "workspace:*",
+    "vue": "catalog:vue2",
+    "vue-router": "catalog:vue2"
+  },
+  "devDependencies": {
+    "@demo/build-config": "workspace:*",
+    "@types/node": "^22.10.1",
+    "@vitejs/plugin-vue2": "catalog:vue2",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

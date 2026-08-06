@@ -1,0 +1,27 @@
+packages:
+  - 'packages/*'
+
+# ── 默认 catalog：Vue3 / React / 通用工具链，版本全仓统一在此维护 ──
+catalog:
+  vite: ^5.4.11
+  typescript: ^5.6.3
+
+  vue: ^3.5.13
+  vue-router: ^4.5.0
+  '@vitejs/plugin-vue': ^5.2.1
+
+  react: ^18.3.1
+  react-dom: ^18.3.1
+  react-router-dom: ^6.28.0
+  '@vitejs/plugin-react': ^4.3.4
+  '@types/react': ^18.3.12
+  '@types/react-dom': ^18.3.1
+
+  qiankun: ^2.10.16
+
+# ── 命名 catalog：Vue2 技术栈单独一档，与 Vue3 在同一仓库和平共处 ──
+catalogs:
+  vue2:
+    vue: ^2.7.16
+    vue-router: ^3.6.5
+    '@vitejs/plugin-vue2': ^2.3.3

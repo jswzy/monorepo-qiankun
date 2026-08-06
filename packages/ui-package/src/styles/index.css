@@ -1,0 +1,347 @@
+/**
+ * @demo/ui-package 设计令牌 + 组件样式
+ * Vue3 / Vue2 / React 三套组件实现共用这一份 CSS，保证跨技术栈视觉完全一致。
+ */
+
+:root {
+  /* 色板 */
+  --demo-bg: #f6f7f9;
+  --demo-surface: #ffffff;
+  --demo-surface-sunken: #f2f4f7;
+  --demo-border: #e4e7ec;
+  --demo-border-strong: #d0d5dd;
+
+  --demo-text: #1d2433;
+  --demo-text-secondary: #545c6b;
+  --demo-text-muted: #8a8f99;
+
+  --demo-primary: #2f5bd8;
+  --demo-primary-hover: #2549b5;
+  --demo-primary-soft: #eaf0ff;
+
+  --demo-success: #1e8449;
+  --demo-success-soft: #e7f4ec;
+  --demo-warning: #b7791f;
+  --demo-warning-soft: #fdf3e2;
+  --demo-danger: #c0392b;
+  --demo-danger-soft: #fdecea;
+  --demo-info-soft: #eef2f7;
+
+  /* A 股习惯：涨红跌绿 */
+  --demo-up: #c0392b;
+  --demo-down: #1e8449;
+
+  /* 形状与层次 */
+  --demo-radius-sm: 4px;
+  --demo-radius: 8px;
+  --demo-radius-lg: 12px;
+  --demo-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --demo-shadow: 0 4px 16px rgba(16, 24, 40, 0.08);
+
+  --demo-space-1: 4px;
+  --demo-space-2: 8px;
+  --demo-space-3: 12px;
+  --demo-space-4: 16px;
+  --demo-space-5: 24px;
+  --demo-space-6: 32px;
+
+  --demo-font: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  --demo-font-mono: 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+/* ---------------- Button ---------------- */
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--demo-font);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 500;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: var(--demo-radius-sm);
+  border: 1px solid var(--demo-border-strong);
+  background: var(--demo-surface);
+  color: var(--demo-text);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.demo-btn:hover:not(.is-disabled) {
+  border-color: var(--demo-primary);
+  color: var(--demo-primary);
+}
+.demo-btn:active:not(.is-disabled) {
+  transform: translateY(0.5px);
+}
+.demo-btn--primary {
+  background: var(--demo-primary);
+  border-color: var(--demo-primary);
+  color: #fff;
+}
+.demo-btn--primary:hover:not(.is-disabled) {
+  background: var(--demo-primary-hover);
+  border-color: var(--demo-primary-hover);
+  color: #fff;
+}
+.demo-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--demo-text-secondary);
+}
+.demo-btn--ghost:hover:not(.is-disabled) {
+  background: var(--demo-surface-sunken);
+  color: var(--demo-text);
+  border-color: transparent;
+}
+.demo-btn--danger {
+  background: var(--demo-danger);
+  border-color: var(--demo-danger);
+  color: #fff;
+}
+.demo-btn--danger:hover:not(.is-disabled) {
+  opacity: 0.88;
+  color: #fff;
+}
+.demo-btn--small {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+.demo-btn--large {
+  height: 38px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+.demo-btn--block {
+  display: flex;
+  width: 100%;
+}
+.demo-btn.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------------- Card ---------------- */
+.demo-card {
+  background: var(--demo-surface);
+  border: 1px solid var(--demo-border);
+  border-radius: var(--demo-radius);
+  box-shadow: var(--demo-shadow-sm);
+  overflow: hidden;
+  font-family: var(--demo-font);
+  color: var(--demo-text);
+}
+.demo-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--demo-space-3);
+  padding: var(--demo-space-3) var(--demo-space-4);
+  border-bottom: 1px solid var(--demo-border);
+  background: linear-gradient(180deg, #fcfcfd 0%, #ffffff 100%);
+}
+.demo-card__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--demo-space-2);
+  min-width: 0;
+}
+.demo-card__accent {
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--demo-primary);
+  flex: none;
+}
+.demo-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.demo-card__subtitle {
+  font-size: 12px;
+  color: var(--demo-text-muted);
+  font-weight: 400;
+}
+.demo-card__extra {
+  flex: none;
+  font-size: 12px;
+  color: var(--demo-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--demo-space-2);
+}
+.demo-card__body {
+  padding: var(--demo-space-4);
+}
+.demo-card--flush .demo-card__body {
+  padding: 0;
+}
+
+/* ---------------- Tag ---------------- */
+.demo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-family: var(--demo-font);
+  font-size: 12px;
+  line-height: 1;
+  background: var(--demo-info-soft);
+  color: var(--demo-text-secondary);
+  white-space: nowrap;
+}
+.demo-tag--success {
+  background: var(--demo-success-soft);
+  color: var(--demo-success);
+}
+.demo-tag--warning {
+  background: var(--demo-warning-soft);
+  color: var(--demo-warning);
+}
+.demo-tag--danger {
+  background: var(--demo-danger-soft);
+  color: var(--demo-danger);
+}
+.demo-tag--primary {
+  background: var(--demo-primary-soft);
+  color: var(--demo-primary);
+}
+.demo-tag__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------------- Stat ---------------- */
+.demo-stat {
+  background: var(--demo-surface);
+  border: 1px solid var(--demo-border);
+  border-radius: var(--demo-radius);
+  padding: var(--demo-space-4);
+  font-family: var(--demo-font);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.demo-stat:hover {
+  box-shadow: var(--demo-shadow);
+  transform: translateY(-1px);
+}
+.demo-stat__label {
+  font-size: 12px;
+  color: var(--demo-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.demo-stat__value {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  font-variant-numeric: tabular-nums;
+  color: var(--demo-text);
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.demo-stat__unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--demo-text-muted);
+}
+.demo-stat__delta {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.demo-stat__delta.is-up {
+  color: var(--demo-up);
+}
+.demo-stat__delta.is-down {
+  color: var(--demo-down);
+}
+
+/* ---------------- Table（工具类，三端直接套用） ---------------- */
+.demo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--demo-font);
+  font-size: 13px;
+  color: var(--demo-text);
+}
+.demo-table th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--demo-text-secondary);
+  background: var(--demo-surface-sunken);
+  padding: 10px var(--demo-space-4);
+  border-bottom: 1px solid var(--demo-border);
+  white-space: nowrap;
+}
+.demo-table td {
+  padding: 11px var(--demo-space-4);
+  border-bottom: 1px solid var(--demo-border);
+  vertical-align: middle;
+}
+.demo-table tbody tr:hover td {
+  background: #fafbfc;
+}
+.demo-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.demo-table .is-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.demo-table .is-mono {
+  font-family: var(--demo-font-mono);
+  font-size: 12px;
+  color: var(--demo-text-secondary);
+}
+
+/* ---------------- 布局工具类 ---------------- */
+.demo-grid {
+  display: grid;
+  gap: var(--demo-space-4);
+}
+.demo-grid--4 {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.demo-grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--demo-space-4);
+}
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--demo-space-2);
+  flex-wrap: wrap;
+}
+.demo-muted {
+  color: var(--demo-text-muted);
+  font-size: 12px;
+}
+.demo-mono {
+  font-family: var(--demo-font-mono);
+}

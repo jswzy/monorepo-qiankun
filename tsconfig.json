@@ -1,0 +1,10 @@
+{
+  "// 说明": [
+    "根 tsconfig 只是聚合入口，不承载任何编译单元。",
+    "真正的编译单元在各 package 自己的 tsconfig.json，它们全部 extends ../../tsconfig.base.json，",
+    "严格度 / target / lib / moduleResolution 等只在 tsconfig.base.json 维护一处。"
+  ],
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "include": []
+}

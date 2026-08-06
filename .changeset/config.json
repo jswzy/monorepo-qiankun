@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "// ignore 说明": "四个应用是可独立部署的运行时产物，不对外发布 npm 包，因此排除在 changeset 版本流程之外",
+  "ignore": ["@demo/main-app", "@demo/app-order", "@demo/app-product", "@demo/app-report"],
+  "privatePackages": { "version": false, "tag": false }
+}

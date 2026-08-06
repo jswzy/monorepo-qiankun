@@ -1,0 +1,49 @@
+{
+  "name": "@demo/shared-utils",
+  "version": "0.1.0",
+  "description": "域内共享工具与领域模型：格式化、存储、请求、事件总线、全局状态、qiankun 运行时适配",
+  "type": "module",
+  "sideEffects": false,
+  "//": [
+    "开发态：main/types/exports 全部指向 src 源码 —— 这是子应用能对公共包做 HMR 热更新、",
+    "并且直接获得完整 TS 类型（类型即源码，无需先 build）的关键。",
+    "发布态：publishConfig 会在 npm publish 时把入口整体替换成 dist 编译产物。"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./qiankun": {
+      "types": "./src/qiankun/index.ts",
+      "default": "./src/qiankun/index.ts"
+    }
+  },
+  "files": ["dist", "src"],
+  "publishConfig": {
+    "access": "restricted",
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./qiankun": {
+        "types": "./dist/qiankun/index.d.ts",
+        "default": "./dist/qiankun/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

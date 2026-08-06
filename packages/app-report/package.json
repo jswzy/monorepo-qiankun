@@ -1,0 +1,29 @@
+{
+  "name": "@demo/app-report",
+  "version": "0.0.0",
+  "private": true,
+  "description": "数据报表微应用 · React 18",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@demo/shared-utils": "workspace:*",
+    "@demo/ui-package": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@demo/build-config": "workspace:*",
+    "@types/node": "^22.10.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
