@@ -20,8 +20,8 @@ export function disposeGlobalStore() {
   handle = connectGlobalState()
 }
 
-export function patchGlobalState(patch: Partial<GlobalState>) {
-  handle.setState(patch)
+export function patchGlobalState(patch: Partial<GlobalState>, opts?: { broadcast?: boolean }) {
+  handle.setState(patch, opts)
 }
 
 export function isStateConnected() {

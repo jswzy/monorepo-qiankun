@@ -1,4 +1,5 @@
 import type { PageResult } from './types'
+import { tokenManager } from './auth'
 
 /**
  * 统一请求层（示例实现）
@@ -45,11 +46,16 @@ export async function request<T>(url: string, options: RequestOptions = {}): Pro
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeout)
 
+  // 生产环境惯例：把登录态以 Bearer 头带上，后端据此鉴权。
+  // 这里直接读统一的 tokenManager——无论是主应用下发的，还是子应用自己获取的，都能拿到。
+  const token = tokenManager.getAccessToken()
+  const authHeaders: Record<string, string> = token ? { Authorization: `${tokenManager.getSession()?.tokenType ?? 'Bearer'} ${token}` } : {}
+
   try {
     const res = await fetch(fullUrl, {
       ...rest,
       signal: controller.signal,
-      headers: { 'Content-Type': 'application/json', ...headers },
+      headers: { 'Content-Type': 'application/json', ...authHeaders, ...headers },
       body: body === undefined ? undefined : JSON.stringify(body)
     })
     if (!res.ok) throw new RequestError(`请求失败 ${res.status}`, res.status, fullUrl)

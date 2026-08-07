@@ -1,5 +1,7 @@
 /** 业务域公共领域模型 —— 主应用与三个子应用共用同一套类型定义 */
 
+import type { AuthSession } from './auth/types'
+
 export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'done' | 'closed'
 
 export interface OrderItem {
@@ -55,6 +57,12 @@ export interface GlobalState {
   lastAction: string
   /** 待办角标 */
   todoCount: number
+  /**
+   * 登录会话（token）。
+   * 主应用获取后通过 qiankun 全局状态下发给所有子应用；
+   * 子应用独立启动时该字段为 null，由子应用自己获取（见 @demo/shared-utils/auth）。
+   */
+  auth: AuthSession | null
 }
 
 /** 统一分页响应 */

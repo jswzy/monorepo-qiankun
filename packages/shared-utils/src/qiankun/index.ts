@@ -46,7 +46,7 @@ interface QiankunGlobalWindow {
 
 /** 取 qiankun 注入的沙箱代理；独立运行时回退到真实 window */
 function getQiankunWindow(): QiankunGlobalWindow {
-  const w = typeof window !== 'undefined' ? (window as QiankunGlobalWindow).proxy : undefined
+  const w = typeof window !== 'undefined' ? (window as unknown as QiankunGlobalWindow).proxy : undefined
   return (w ?? (typeof window !== 'undefined' ? (window as unknown as QiankunGlobalWindow) : ({} as QiankunGlobalWindow)))
 }
 
@@ -59,7 +59,7 @@ function getQiankunWindow(): QiankunGlobalWindow {
  */
 function getRealWindow(): QiankunGlobalWindow {
   if (typeof window === 'undefined') return {} as QiankunGlobalWindow
-  const w = window as QiankunGlobalWindow & { top?: unknown }
+  const w = window as unknown as QiankunGlobalWindow & { top?: unknown }
   try {
     if (w.top && w.top !== w) return w.top as unknown as QiankunGlobalWindow
   } catch {
@@ -80,21 +80,28 @@ export function getPublicPath(): string {
 
 /** 当前子应用的 qiankun 注册名（独立运行 / 主应用中为空串） */
 export const QIANKUN_APP_NAME: string =
-  typeof window !== 'undefined' ? ((window as QiankunGlobalWindow).proxy?.qiankunName ?? '') : ''
+  typeof window !== 'undefined' ? ((window as unknown as QiankunGlobalWindow).proxy?.qiankunName ?? '') : ''
 
 /**
  * 注册子应用生命周期。
  *
- * 关键修复：无条件写入「真实 window」的 `moudleQiankunAppLifeCycles[name]`。
- * - 不依赖 `__POWERED_BY_QIANKUN__` 守卫：否则预加载（prefetch）在真实 window 下提前执行入口
- *   模块时不会注册，模块被缓存后真正挂载时入口不再执行，生命周期就丢失 → 永久 loading。
+ * 关键：仅在「真正运行于 qiankun 基座下」时登记。
+ * - 判据用 `window.__POWERED_BY_QIANKUN__`（qiankun 注入），而不是 `qiankunName`：
+ *   vite-plugin-qiankun 注入的 createQiankunHelper 会「无条件」把 window.qiankunName 设为子应用名，
+ *   即便独立运行也如此；若仅凭 qiankunName 判断，独立运行时会误登记生命周期，进而触发插件在
+ *   .finally 里执行 `window.proxy.vitemount(...)`——而独立运行没有 qiankun 沙箱，`window.proxy`
+ *   为 undefined，直接抛 `Cannot read properties of undefined (reading 'vitemount')`。
  * - 写入真实 window：沙箱代理卸载销毁、模块被浏览器缓存都不会丢失，任何一次挂载的 `.finally`
  *   都能读到，从而兑现延迟生命周期。
  *
- * `name` 取自沙箱代理上的 `qiankunName`（由 vite-plugin-qiankun 注入脚本设置）。
+ * 说明：本仓库 qiankun 启动已关闭 prefetch（见 register.ts），所以不存在「prefetch 在真实 window
+ * 下提前执行入口却未登记」导致的永久 loading 问题，可以放心用 __POWERED_BY_QIANKUN__ 守卫。
  */
 export function renderWithQiankun(lifeCycles: QiankunLifeCycle): void {
-  const name = getQiankunWindow().qiankunName
+  const w = getQiankunWindow()
+  if (!w.__POWERED_BY_QIANKUN__) return
+
+  const name = w.qiankunName
   if (!name) return
 
   const realWin = getRealWindow()

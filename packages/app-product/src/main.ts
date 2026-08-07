@@ -6,6 +6,7 @@ import './styles/app.css'
 import AppRoot from './App.vue'
 import { createAppRouter } from './router'
 import { initGlobalStore, disposeGlobalStore } from './global-store'
+import { initAuth, destroyAuth } from './auth'
 import {
   renderWithQiankun,
   isQiankun,
@@ -18,6 +19,8 @@ let app: VueApp<Element> | null = null
 
 function render(props: QiankunProps = {}) {
   initGlobalStore(props)
+  // 接入登录态：qiankun 模式下订阅主应用下发的 token；独立模式自助获取
+  void initAuth(props)
 
   app = createApp(AppRoot)
   app.use(createAppRouter(resolveRouterBase(__APP_ACTIVE_RULE__)))
@@ -28,6 +31,7 @@ function destroy() {
   app?.unmount()
   app = null
   disposeGlobalStore()
+  destroyAuth()
 }
 
 renderWithQiankun({

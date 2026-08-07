@@ -3,3 +3,5 @@ dist
 coverage
 pnpm-lock.yaml
 *.d.ts
+# Vite 加载 vite.config.ts 时生成的临时编译产物，不纳入 lint
+vite.config.ts.timestamp-*.mjs

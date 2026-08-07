@@ -12,6 +12,7 @@ export * from './event-bus'
 export * from './request'
 export * from './global-state'
 export * from './mock-data'
+export * from './auth'
 
 /** 包版本，便于在页面上直观确认子应用吃到的是同一份公共包 */
 export const SHARED_UTILS_VERSION = '0.1.0'

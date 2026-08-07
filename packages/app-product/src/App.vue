@@ -1,12 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { DemoTag, UI_PACKAGE_VERSION, UI_PACKAGE_FLAVOR } from '@demo/ui-package/vue3'
 import { SHARED_UTILS_VERSION } from '@demo/shared-utils'
 import { isQiankun } from '@demo/shared-utils/qiankun'
+import { globalState } from './global-store'
 
 // 构建期注入的常量必须在 script 里取值（模板表达式不参与 define 替换）
 const title = __APP_TITLE__
 const framework = __APP_FRAMEWORK__
 const embedded = isQiankun()
+
+// 展示主应用下发的（或独立启动时自己获取的）token 片段，证明登录态已共享。
+// auth 来自响应式全局状态 globalState（由 connectGlobalState 桥接主应用下发 / 独立模式由 initAuth 写入）。
+const authTokenMask = computed(() => {
+  const t = globalState.auth?.accessToken
+  return t ? `${t.slice(0, 20)}…${t.slice(-6)}` : '未获取'
+})
 </script>
 
 <template>
@@ -27,6 +36,9 @@ const embedded = isQiankun()
         <DemoTag tone="neutral">shared-utils v{{ SHARED_UTILS_VERSION }}</DemoTag>
         <DemoTag tone="neutral">
           ui-package v{{ UI_PACKAGE_VERSION }}（{{ UI_PACKAGE_FLAVOR }}）
+        </DemoTag>
+        <DemoTag :tone="authTokenMask === '未获取' ? 'neutral' : 'primary'" dot>
+          共享 token：{{ authTokenMask }}
         </DemoTag>
       </div>
     </header>

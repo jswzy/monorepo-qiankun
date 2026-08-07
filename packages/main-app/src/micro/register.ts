@@ -25,6 +25,13 @@ actions.onGlobalStateChange((state) => {
   Object.assign(globalState, state as Partial<GlobalState>)
 }, true)
 
+/**
+ * 主应用侧的 qiankun global-state 句柄。
+ * 导出给 token-manager 使用：主应用登录后通过它把 token 广播给所有子应用，
+ * 子应用登出时也会通过它回传 `auth: null` 实现联动。
+ */
+export const qiankunActions = actions
+
 /** 主应用修改全局状态 → qiankun 广播给所有微应用 */
 export function patchGlobalState(patch: Partial<GlobalState>) {
   Object.assign(globalState, patch)
@@ -90,4 +97,7 @@ export function bootstrapMicroApps() {
     prefetch: false,
     singular: true
   })
+
+  // 主应用侧已通过 tokenManager 把 token 写入共享 localStorage，并经由 window 事件
+  // （AUTH_SYNC_EVENT）实时下发；子应用 hydrate + bindExternalSync 即可拿到同一份登录态。
 }

@@ -8,6 +8,7 @@ import './styles/app.css'
 import App from './App.vue'
 import { createAppRouter } from './router'
 import { initGlobalStore, globalStore } from './global-store'
+import { initAuth, destroyAuth } from './auth'
 import {
   renderWithQiankun,
   isQiankun,
@@ -23,6 +24,8 @@ let instance: Vue | null = null
 
 function render(props: QiankunProps = {}) {
   initGlobalStore(props)
+  // 接入登录态：qiankun 模式下订阅主应用下发的 token；独立模式自助获取
+  void initAuth(props)
 
   const router = createAppRouter(resolveRouterBase(__APP_ACTIVE_RULE__))
   const root = resolveMountRoot(props, '#app-order-root')
@@ -36,6 +39,7 @@ function render(props: QiankunProps = {}) {
 
 function destroy() {
   globalStore().destroy()
+  destroyAuth()
   if (!instance) return
   const el = instance.$el as HTMLElement | undefined
   instance.$destroy()

@@ -20,6 +20,10 @@
     "./qiankun": {
       "types": "./src/qiankun/index.ts",
       "default": "./src/qiankun/index.ts"
+    },
+    "./auth": {
+      "types": "./src/auth/index.ts",
+      "default": "./src/auth/index.ts"
     }
   },
   "files": ["dist", "src"],
@@ -36,6 +40,10 @@
       "./qiankun": {
         "types": "./dist/qiankun/index.d.ts",
         "default": "./dist/qiankun/index.js"
+      },
+      "./auth": {
+        "types": "./dist/auth/index.d.ts",
+        "default": "./dist/auth/index.js"
       }
     }
   },

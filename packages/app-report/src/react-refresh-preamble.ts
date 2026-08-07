@@ -27,6 +27,8 @@ if (import.meta.env.DEV) {
   }
 
   // 异步安装真正的 Refresh 运行时，使 React 组件热更新可用；失败仅影响 HMR，不影响挂载。
+  // @ts-expect-error '/@react-refresh' 是 Vite 仅开发态注入的虚拟模块，tsc 无法解析其类型；
+  // 生产构建中整段会被 Rollup 摇树移除，不会引用该模块。
   import('/@react-refresh')
     .then((m: { default: { injectIntoGlobalHook: (g: unknown) => void } }) => {
       m.default.injectIntoGlobalHook(window as unknown as Window & typeof globalThis)

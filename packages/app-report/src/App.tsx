@@ -3,6 +3,7 @@ import { DemoTag, UI_PACKAGE_VERSION, UI_PACKAGE_FLAVOR } from '@demo/ui-package
 import { SHARED_UTILS_VERSION } from '@demo/shared-utils'
 import { isQiankun } from '@demo/shared-utils/qiankun'
 import { useGlobalState } from './global-store'
+import { useAuth } from './auth'
 import ReportListView from './views/ReportListView'
 import ReportDetailView from './views/ReportDetailView'
 
@@ -12,6 +13,7 @@ const embedded = isQiankun()
 
 export default function App() {
   const state = useGlobalState()
+  const { session, maskToken } = useAuth()
 
   return (
     <div className="micro-app micro-app--report">
@@ -45,6 +47,10 @@ export default function App() {
 
       <div className="micro-app__state">
         当前登录：<b>{state.user.name}</b>（{state.user.role}） · 部门 {state.user.dept}
+        <span className="micro-app__token">
+          共享 token：
+          <code>{session ? maskToken(session.accessToken) : '未获取'}</code>
+        </span>
       </div>
 
       <Routes>

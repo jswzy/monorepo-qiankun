@@ -4,7 +4,7 @@ import type { OrderItem, ProductItem, ReportMetric, TrendPoint, CurrentUser } fr
 
 export const CURRENT_USER: CurrentUser = {
   id: 'U-1024',
-  name: '何文月',
+  name: '何文玥',
   role: '管理员',
   dept: '数字化供应链中心'
 }

@@ -21,8 +21,8 @@ export function initGlobalStore(props?: QiankunProps) {
   return handle
 }
 
-export function patchGlobalState(patch: Partial<GlobalState>) {
-  if (handle) handle.setState(patch)
+export function patchGlobalState(patch: Partial<GlobalState>, opts?: { broadcast?: boolean }) {
+  if (handle) handle.setState(patch, opts)
   else Object.assign(globalState, patch)
 }
 

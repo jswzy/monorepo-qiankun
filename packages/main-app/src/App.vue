@@ -5,6 +5,7 @@ import { SUB_APPS, MAIN_APP } from '@demo/build-config/apps'
 import { DemoTag, DemoButton } from '@demo/ui-package/vue3'
 import { SHARED_UTILS_VERSION } from '@demo/shared-utils'
 import { globalState, microStatus, patchGlobalState } from './micro/register'
+import { useHostAuth } from './auth/use-host-auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -19,6 +20,7 @@ const activeMicro = computed(() => SUB_APPS.find((a) => a.key === route.meta.mic
 const pageTitle = computed(() => (route.meta.title as string) || '工作台')
 
 function go(path: string) {
+  console.log('主应用导航到', path, route.path)
   if (route.path === path) return
   patchGlobalState({ lastAction: `主应用导航到 ${path}` })
   router.push(path)
@@ -30,6 +32,9 @@ const statusText: Record<string, string> = {
   mounted: '运行中',
   error: '异常'
 }
+
+// 主应用自己的登录态（token 权威来源）：展示 token 片段、提供重新登录 / 退出登录
+const { session, loggingIn, maskToken, login, logout } = useHostAuth()
 </script>
 
 <template>
@@ -98,6 +103,24 @@ const statusText: Record<string, string> = {
         </div>
         <div class="topbar__right">
           <span class="topbar__hint">shared-utils v{{ SHARED_UTILS_VERSION }}</span>
+
+          <!-- 登录态：主应用是 token 权威来源，这里展示它签发/下发的 token 片段 -->
+          <DemoTag :tone="session ? 'primary' : 'neutral'" dot>
+            {{ session ? '已登录 · token ' + maskToken(session.accessToken) : '未登录' }}
+          </DemoTag>
+
+          <DemoButton size="small" type="ghost" :disabled="loggingIn" @click="login()">
+            {{ loggingIn ? '登录中…' : '重新登录' }}
+          </DemoButton>
+          <DemoButton
+            v-if="session"
+            size="small"
+            type="ghost"
+            @click="logout()"
+          >
+            退出登录
+          </DemoButton>
+
           <DemoButton size="small" type="ghost" @click="patchGlobalState({ todoCount: globalState.todoCount + 1 })">
             待办 {{ globalState.todoCount }}
           </DemoButton>
