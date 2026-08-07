@@ -1,0 +1,16 @@
+// vite.config.ts
+import { defineConfig } from "file:///Users/hewenyue/Desktop/ehsy/monorepo-qiankun/node_modules/.pnpm/vite@5.4.21_@types+node@22.20.1/node_modules/vite/dist/node/index.js";
+import react from "file:///Users/hewenyue/Desktop/ehsy/monorepo-qiankun/node_modules/.pnpm/@vitejs+plugin-react@4.7.0_vite@5.4.21_@types+node@22.20.1_/node_modules/@vitejs/plugin-react/dist/index.js";
+import { createSubAppConfig } from "file:///Users/hewenyue/Desktop/ehsy/monorepo-qiankun/packages/build-config/src/index.mjs";
+var vite_config_default = defineConfig(
+  ({ command }) => createSubAppConfig({
+    appKey: "app-report",
+    command,
+    plugins: [react()],
+    dedupe: ["react", "react-dom"]
+  })
+);
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcudHMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCIvVXNlcnMvaGV3ZW55dWUvRGVza3RvcC9laHN5L21vbm9yZXBvLXFpYW5rdW4vcGFja2FnZXMvYXBwLXJlcG9ydFwiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9maWxlbmFtZSA9IFwiL1VzZXJzL2hld2VueXVlL0Rlc2t0b3AvZWhzeS9tb25vcmVwby1xaWFua3VuL3BhY2thZ2VzL2FwcC1yZXBvcnQvdml0ZS5jb25maWcudHNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfaW1wb3J0X21ldGFfdXJsID0gXCJmaWxlOi8vL1VzZXJzL2hld2VueXVlL0Rlc2t0b3AvZWhzeS9tb25vcmVwby1xaWFua3VuL3BhY2thZ2VzL2FwcC1yZXBvcnQvdml0ZS5jb25maWcudHNcIjtpbXBvcnQgeyBkZWZpbmVDb25maWcgfSBmcm9tICd2aXRlJ1xuaW1wb3J0IHJlYWN0IGZyb20gJ0B2aXRlanMvcGx1Z2luLXJlYWN0J1xuaW1wb3J0IHsgY3JlYXRlU3ViQXBwQ29uZmlnIH0gZnJvbSAnQGRlbW8vYnVpbGQtY29uZmlnJ1xuXG5leHBvcnQgZGVmYXVsdCBkZWZpbmVDb25maWcoKHsgY29tbWFuZCB9KSA9PlxuICBjcmVhdGVTdWJBcHBDb25maWcoe1xuICAgIGFwcEtleTogJ2FwcC1yZXBvcnQnLFxuICAgIGNvbW1hbmQsXG4gICAgcGx1Z2luczogW3JlYWN0KCldLFxuICAgIGRlZHVwZTogWydyZWFjdCcsICdyZWFjdC1kb20nXVxuICB9KVxuKVxuIl0sCiAgIm1hcHBpbmdzIjogIjtBQUFxWCxTQUFTLG9CQUFvQjtBQUNsWixPQUFPLFdBQVc7QUFDbEIsU0FBUywwQkFBMEI7QUFFbkMsSUFBTyxzQkFBUTtBQUFBLEVBQWEsQ0FBQyxFQUFFLFFBQVEsTUFDckMsbUJBQW1CO0FBQUEsSUFDakIsUUFBUTtBQUFBLElBQ1I7QUFBQSxJQUNBLFNBQVMsQ0FBQyxNQUFNLENBQUM7QUFBQSxJQUNqQixRQUFRLENBQUMsU0FBUyxXQUFXO0FBQUEsRUFDL0IsQ0FBQztBQUNIOyIsCiAgIm5hbWVzIjogW10KfQo=

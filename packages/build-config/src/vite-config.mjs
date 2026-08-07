@@ -5,11 +5,22 @@
  * 端口 / base / qiankun 适配 / workspace 源码直连 / HMR 回连 等都在这里统一维护。
  */
 import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import { MAIN_APP, getSubApp } from './apps.mjs'
 import qiankun from 'vite-plugin-qiankun'
 
 /** monorepo 仓库根目录绝对路径 */
 export const WORKSPACE_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
+
+/**
+ * 可选的依赖预构建缓存目录（仅当设置 VITE_CACHE_DIR 时生效）。
+ * 默认缓存落在各包 node_modules/.vite；在某些受限环境里对该路径的批量删除会被拦截，
+ * 此时可用 VITE_CACHE_DIR 把缓存重定向到 node_modules 之外，避免启动失败。
+ * 正常开发机可不设置，使用默认行为。
+ */
+function resolveCacheDir(subdir) {
+  return process.env.VITE_CACHE_DIR ? join(process.env.VITE_CACHE_DIR, subdir) : undefined
+}
 
 /** 域内公共包：必须走源码直连，才能做到「改公共包 → 子应用热更新实时生效」 */
 export const INTERNAL_PACKAGES = ['@demo/shared-utils', '@demo/ui-package', '@demo/build-config']
@@ -94,6 +105,7 @@ export function createSubAppConfig({ appKey, command, plugins = [], dedupe = [],
         }
       }
     },
+    cacheDir: resolveCacheDir(app.key),
     define: {
       __APP_KEY__: JSON.stringify(app.key),
       __APP_TITLE__: JSON.stringify(app.title),
@@ -136,7 +148,8 @@ export function createMainAppConfig({ command, plugins = [], dedupe = [], extra 
       outDir: 'dist',
       sourcemap: false,
       reportCompressedSize: false
-    }
+    },
+    cacheDir: resolveCacheDir('main')
   }
 
   return mergeConfig(config, extra)

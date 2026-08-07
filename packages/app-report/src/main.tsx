@@ -1,3 +1,7 @@
+// 必须作为第一个 import：qiankun 子应用里 React Fast Refresh 的引导逻辑，
+// 用顶层 await 保证先于所有组件模块安装运行时（见该文件注释）。
+import './react-refresh-preamble'
+
 import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'

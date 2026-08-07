@@ -7,6 +7,10 @@
  * SyntaxError 导致微应用永远卡在 loading）；同时在 HTML 注入一段 classic 脚本，在沙箱
  * window 上挂好「延迟兑现」的生命周期。这里负责把真正的生命周期写到
  * `window.moudleQiankunAppLifeCycles[name]`，由注入脚本的 `.finally` 兑现，打通沙箱 ↔ 真实 window。
+ *
+ * 生命周期必须写到「真实 window」而非沙箱代理：qiankun 的预加载（prefetch）会在真实 window
+ * 下提前执行入口模块并缓存，而沙箱代理在卸载时会被销毁；若生命周期只挂在沙箱代理上，重新挂载
+ * 时入口模块已被浏览器缓存、不再执行，生命周期就丢失，微应用会永远卡在 loading。
  */
 import type { GlobalStateChannel } from '../global-state'
 
@@ -46,6 +50,24 @@ function getQiankunWindow(): QiankunGlobalWindow {
   return (w ?? (typeof window !== 'undefined' ? (window as unknown as QiankunGlobalWindow) : ({} as QiankunGlobalWindow)))
 }
 
+/**
+ * 取「真实 window」。
+ *
+ * qiankun 的 proxy 沙箱里 `window` 是代理，但同域下 `window.top` 指向真实 window；
+ * 关闭沙箱（`sandbox: false`）时 `window.top === window` 仍是真实 window。
+ * 生命周期写到真实 window 才能不受沙箱销毁、模块缓存影响。
+ */
+function getRealWindow(): QiankunGlobalWindow {
+  if (typeof window === 'undefined') return {} as QiankunGlobalWindow
+  const w = window as QiankunGlobalWindow & { top?: unknown }
+  try {
+    if (w.top && w.top !== w) return w.top as unknown as QiankunGlobalWindow
+  } catch {
+    /* ignore */
+  }
+  return w
+}
+
 /** 当前是否运行在 qiankun 主应用中 */
 export function isQiankun(): boolean {
   return Boolean(getQiankunWindow().__POWERED_BY_QIANKUN__)
@@ -62,21 +84,24 @@ export const QIANKUN_APP_NAME: string =
 
 /**
  * 注册子应用生命周期。
- * 在 qiankun 环境下写入 `window.moudleQiankunAppLifeCycles[name]`，由 vite-plugin-qiankun
- * 注入脚本的 `.finally` 兑现延迟生命周期；独立运行时是安全的空操作。
+ *
+ * 关键修复：无条件写入「真实 window」的 `moudleQiankunAppLifeCycles[name]`。
+ * - 不依赖 `__POWERED_BY_QIANKUN__` 守卫：否则预加载（prefetch）在真实 window 下提前执行入口
+ *   模块时不会注册，模块被缓存后真正挂载时入口不再执行，生命周期就丢失 → 永久 loading。
+ * - 写入真实 window：沙箱代理卸载销毁、模块被浏览器缓存都不会丢失，任何一次挂载的 `.finally`
+ *   都能读到，从而兑现延迟生命周期。
+ *
+ * `name` 取自沙箱代理上的 `qiankunName`（由 vite-plugin-qiankun 注入脚本设置）。
  */
 export function renderWithQiankun(lifeCycles: QiankunLifeCycle): void {
-  const qiankunWindow = getQiankunWindow()
-  if (!qiankunWindow.__POWERED_BY_QIANKUN__) return
+  const name = getQiankunWindow().qiankunName
+  if (!name) return
 
-  const realWin = window as unknown as QiankunGlobalWindow
+  const realWin = getRealWindow()
   if (!realWin.moudleQiankunAppLifeCycles) {
     realWin.moudleQiankunAppLifeCycles = {}
   }
-  const name = qiankunWindow.qiankunName
-  if (name) {
-    realWin.moudleQiankunAppLifeCycles[name] = lifeCycles
-  }
+  realWin.moudleQiankunAppLifeCycles[name] = lifeCycles
 }
 
 /**

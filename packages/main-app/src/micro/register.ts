@@ -84,8 +84,10 @@ export function bootstrapMicroApps() {
   start({
     // 样式隔离：给子应用注入的样式加上容器属性选择器前缀
     sandbox: { experimentalStyleIsolation: true },
-    // 预加载全部子应用静态资源，切换更顺滑
-    prefetch: 'all',
+    // 关闭预加载：prefetch 会在真实 window 下提前执行并缓存各子应用入口模块，
+    // 而生命周期只在入口真正执行时注册；缓存后真正挂载时入口不再执行，生命周期丢失，
+    // 微应用会永久卡在 loading。关闭后首次挂载必然重新执行入口，注册可靠。
+    prefetch: false,
     singular: true
   })
 }
