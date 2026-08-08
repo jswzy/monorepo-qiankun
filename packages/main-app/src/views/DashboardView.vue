@@ -13,6 +13,7 @@ import {
 } from '@demo/shared-utils'
 import { SUB_APPS } from '@demo/build-config/apps'
 import { microStatus, globalState, patchGlobalState } from '../micro/register'
+import ChinaSalesMap from './ChinaSalesMap.vue'
 
 const router = useRouter()
 const recent = ref<OrderItem[]>(ORDERS.slice(0, 5))
@@ -46,6 +47,8 @@ function broadcast() {
         :delta="m.delta"
       />
     </div>
+
+    <ChinaSalesMap />
 
     <DemoCard title="微应用总览" subtitle="运行时独立 · 开发时同仓" accent="#2f5bd8">
       <template #extra>

@@ -13,6 +13,7 @@
   "dependencies": {
     "@demo/shared-utils": "workspace:*",
     "@demo/ui-package": "workspace:*",
+    "echarts": "^5.5.1",
     "qiankun": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
