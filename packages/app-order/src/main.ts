@@ -27,7 +27,11 @@ function render(props: QiankunProps = {}) {
   // 接入登录态：qiankun 模式下订阅主应用下发的 token；独立模式自助获取
   void initAuth(props)
 
-  const router = createAppRouter(resolveRouterBase(__APP_ACTIVE_RULE__))
+  // base 用 resolveRouterBase：优先取主应用经 props.meta.activeRule 下发的权威值
+  // （dev 下 __APP_ACTIVE_RULE__ 是会被其它子应用改写的可变全局，绝不能直接用），
+  // 并据此判据是否处于 qiankun（props.container/name 兜底，避免沙箱标志竞态误判）。
+  const base = resolveRouterBase(__APP_ACTIVE_RULE__, props)
+  const router = createAppRouter(base)
   const root = resolveMountRoot(props, '#app-order-root')
 
   instance = new Vue({

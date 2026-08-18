@@ -23,7 +23,8 @@ function render(props: QiankunProps = {}) {
   void initAuth(props)
 
   app = createApp(AppRoot)
-  app.use(createAppRouter(resolveRouterBase(__APP_ACTIVE_RULE__)))
+  // 透传 props 让 resolveRouterBase 用 props 判据，避免 isQiankun() 竞态
+  app.use(createAppRouter(resolveRouterBase(__APP_ACTIVE_RULE__, props)))
   app.mount(resolveMountRoot(props, '#app-product-root'))
 }
 

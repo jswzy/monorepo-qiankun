@@ -127,7 +127,24 @@ export function resolveMountRoot(props: QiankunProps = {}, selector = '#app'): H
   return created
 }
 
-/** 子应用路由 base：被主应用集成时使用 activeRule，独立运行时用 '/' */
-export function resolveRouterBase(activeRule: string): string {
-  return isQiankun() ? activeRule : '/'
+/**
+ * 子应用路由 base：被主应用集成时使用 activeRule（/order、/product、/report），独立运行时用 '/'。
+ *
+ * 根因修复（dev 下「切到子应用跳工作台」的真凶）：
+ * __APP_ACTIVE_RULE__ 在 dev 中由 vite define 注入，但 vite-plugin-qiankun 模式下它实际上是
+ * 一个【运行时全局变量】，每个子应用挂载时都会把它改写成自己的 activeRule。子应用入口模块被浏览器
+ * 缓存后只求值一次，但其 render() 每次挂载都会重新读取这个全局——于是重挂载时读到的已是「上一个
+ * 挂载子应用」的规则（例如切到 order 时读到 /report），base 错乱 → 历史模式子应用首屏把地址栏
+ * replaceState 到错误作用域 → activeRule 失配 → 子应用被卸载 → 跳到别的子应用/工作台。
+ * 只有 history 模式子应用受害（memory 模式不写 URL，base 无影响）。
+ *
+ * 修复：优先采用主应用通过 props.meta.activeRule 下发的【权威值】（基于 apps 注册表，
+ * 单一数据源，绝不跨子应用污染）；isQiankun() 仍作「是否集成」的判据（用 props.container/name
+ * 兜底，避免沙箱标志在 singular 竞态下误判）；独立运行回退到 '/'。
+ */
+export function resolveRouterBase(activeRule: string, props: QiankunProps = {}): string {
+  const inQiankun = Boolean(props.container) || Boolean(props.name) || isQiankun()
+  const ruleFromProps = (props.meta as { activeRule?: string } | undefined)?.activeRule
+  const effectiveRule = ruleFromProps || activeRule
+  return inQiankun ? effectiveRule : '/'
 }
