@@ -19,6 +19,9 @@ catalog:
 
   qiankun: ^2.10.16
 
+  # 图表库：航运航线图（app-ship）与基座大屏共用同一版本，避免重复打包
+  echarts: ^5.6.0
+
 # ── 命名 catalog：Vue2 技术栈单独一档，与 Vue3 在同一仓库和平共处 ──
 catalogs:
   vue2:

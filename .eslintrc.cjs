@@ -52,11 +52,12 @@ module.exports = {
       }
     },
 
-    /* ---------------- Vue3：主应用 / app-product / ui-package 的 vue3 组件 ---------------- */
+    /* ---------------- Vue3：主应用 / app-product / app-ship / ui-package 的 vue3 组件 ---------------- */
     {
       files: [
         'packages/main-app/**/*.vue',
         'packages/app-product/**/*.vue',
+        'packages/app-ship/**/*.vue',
         'packages/ui-package/src/vue3/**/*.vue'
       ],
       parser: 'vue-eslint-parser',

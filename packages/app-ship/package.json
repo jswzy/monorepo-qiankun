@@ -1,0 +1,28 @@
+{
+  "name": "@demo/app-ship",
+  "version": "0.0.0",
+  "private": true,
+  "description": "航运航线监控微应用 · Vue 3 + ECharts",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@demo/shared-utils": "workspace:*",
+    "@demo/ui-package": "workspace:*",
+    "echarts": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@demo/build-config": "workspace:*",
+    "@types/node": "^22.10.1",
+    "@vitejs/plugin-vue": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vue-tsc": "^2.1.10"
+  }
+}

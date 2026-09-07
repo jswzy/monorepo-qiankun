@@ -15,7 +15,7 @@ export const MAIN_APP = {
   publicPath: '/'
 }
 
-/** 三个子应用（微应用） */
+/** 四个子应用（微应用） */
 export const SUB_APPS = [
   {
     /** qiankun 注册名，同时是 window 上生命周期的挂载 key */
@@ -52,6 +52,17 @@ export const SUB_APPS = [
     devPort: 8003,
     activeRule: '/report',
     publicPath: '/app-report/'
+  },
+  {
+    key: 'app-ship',
+    name: '@demo/app-ship',
+    title: '航运航线监控',
+    framework: 'Vue 3 + ECharts',
+    icon: '🚢',
+    accent: '#0b6ea8',
+    devPort: 8004,
+    activeRule: '/ship',
+    publicPath: '/app-ship/'
   }
 ]
 
