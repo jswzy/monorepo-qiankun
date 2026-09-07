@@ -186,6 +186,57 @@ React 侧额外封装了 `useGlobalState()` hook（见 `packages/app-report/src/
 
 ---
 
+## 六·五、订单详情页白屏监控（核心实战）
+
+订单详情页（`packages/app-order/src/views/OrderDetailView.vue`，路由 `/order/detail/:id`）内置一套**框架无关**的白屏监控，逻辑沉淀在 `@demo/shared-utils/white-screen`，可被 vue2 / vue3 / react 任意子应用复用。
+
+### 两套判定策略
+
+1. **DOM 元素检测（empty）**：定时（默认 500ms 轮询）检查根节点子元素数量，长时间（默认 4000ms）为 0 判定白屏。
+2. **骨架屏 + 超时判定（skeleton）**：页面先渲染骨架屏（标记 `data-skeleton`）做异步加载占位；监控器用 `MutationObserver` 监听骨架屏何时消失（消失即解除警报），同时挂一个 `setTimeout` 超时（默认 5000ms，即需求中的 X 秒）——**超时到点根节点「仍只有骨架屏」才判定白屏**。这正是 `MutationObserver + 超时判定` 的组合。
+
+### 实时上报 + localStorage 落盘
+
+命中白屏后调用 `reportWhiteScreen`：
+
+- **实时上报**：优先 `navigator.sendBeacon`，降级 `fetch(keepalive)`，把事件推到可配置的上报地址。
+- **落盘 localStorage**：无论上报成败，都先把该次「请求」作为模拟记录写入浏览器 `localStorage`（key：`@demo:monitor:white-screen-queue`）。无后端时即视为**错误模拟请求持久化**，便于离线排查与联调；上报失败时状态记为 `failed`，成功记为 `sent`。
+
+### 用法
+
+```ts
+import {
+  createWhiteScreenMonitor,
+  getWhiteScreenQueue,
+  clearWhiteScreenQueue,
+  type WhiteScreenReport
+} from '@demo/shared-utils/white-screen'
+
+const monitor = createWhiteScreenMonitor({
+  root: document.querySelector('#order-detail-root')!, // 被监控的页面根节点
+  appKey: __APP_KEY__,
+  framework: __APP_FRAMEWORK__,
+  route: `/order/detail/${id}`,
+  emptyThresholdMs: 4000,   // 根节点空多久判定白屏
+  skeletonTimeoutMs: 5000,  // 骨架屏持续多久判定白屏（X 秒）
+  onWhiteScreen: (report: WhiteScreenReport) => {
+    // report 已落盘 localStorage，并尝试过实时上报
+  }
+})
+monitor.start()   // mounted 时启动
+// monitor.stop() // beforeDestroy 时停止
+```
+
+### 体验路径
+
+`pnpm dev` 打开工作台 → 进入「订单中心」→ 点任意订单进入详情页，页面底部有 **🛰️ 白屏监控** 面板：
+
+- **模拟骨架屏卡死**：骨架屏一直挂 → 5s 后触发 `skeleton` 白屏告警。
+- **模拟根节点为空**：根节点任何子元素都没有 → 4s 后触发 `empty` 白屏告警。
+- 两种触发都会**实时上报**并在面板列出 **localStorage 中已落盘的模拟请求**（含策略 / 状态 / 时间），「清空本地记录」可一键清理。
+
+---
+
 ## 七、发布公共包（边界约束的出口）
 
 当外部业务域需要复用 `@demo/shared-utils` / `@demo/ui-package` 时，**不要跨仓库引用源码**，而是走 changeset：
