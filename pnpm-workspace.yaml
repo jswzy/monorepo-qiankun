@@ -21,6 +21,8 @@ catalog:
 
   # 图表库：航运航线图（app-ship）与基座大屏共用同一版本，避免重复打包
   echarts: ^5.6.0
+  # 三维地球仪（app-ship · 科技感旋转地球 + 大圆弧航线），需与 echarts 主版本配套
+  echarts-gl: ^2.0.9
 
 # ── 命名 catalog：Vue2 技术栈单独一档，与 Vue3 在同一仓库和平共处 ──
 catalogs:

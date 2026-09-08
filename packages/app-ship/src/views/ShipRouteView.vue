@@ -9,7 +9,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { DemoCard, DemoTag, DemoButton } from '@demo/ui-package/vue3'
 import ShipPhoto from '../components/ShipPhoto.vue'
-import ShipRouteChart from '../components/ShipRouteChart.vue'
+import ShipGlobe from '../components/ShipGlobe.vue'
 import {
   getShip,
   routeDistanceNm,
@@ -92,13 +92,13 @@ function back(): void {
         </div>
       </DemoCard>
 
-      <!-- 航线轨迹图 -->
+      <!-- 航线轨迹图（地球仪） -->
       <DemoCard
         title="航线轨迹图"
-        :subtitle="`折线依次串联 ${ship.route.length} 个挂靠点 · 滚轮缩放 / 拖拽平移`"
+        :subtitle="`大圆弧航线串联 ${ship.route.length} 个挂靠点 · 地球自动旋转 / 拖拽 / 滚轮缩放`"
         accent="#0b6ea8"
       >
-        <ShipRouteChart :ship="ship" />
+        <ShipGlobe :ships="ship ? [ship] : []" :selected="ship" :height="'520px'" />
       </DemoCard>
 
       <!-- 挂靠点时间轴 -->

@@ -3,16 +3,15 @@
  * 航运控制塔（微应用首页 / 初始视图）
  *
  * 布局：左侧主区 + 右侧可折叠货轮边栏。
- *  - 初始：主区渲染全球船位地图（ShipFleetMap），展示全部货轮「当前船位」。
- *  - 点击船位标记 / 边栏货轮 → 选中该船，主区切换为该船的航线轨迹图（ShipRouteChart）。
+ *  - 初始：主区渲染地球仪（ShipGlobe），连续自转，展示全部货轮「当前船位」。
+ *  - 点击船位标记 / 边栏货轮 → 选中该船，地球仪叠加该船的大圆弧航线 + 六类挂靠点。
  *  - 边栏可折叠隐藏，最大化地图区域；选中态与地图联动高亮。
  *  - 「完整详情」进入 /route/:id 单船详情页（挂靠点时间轴等）。
  */
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { DemoTag, DemoButton } from '@demo/ui-package/vue3'
-import ShipFleetMap from '../components/ShipFleetMap.vue'
-import ShipRouteChart from '../components/ShipRouteChart.vue'
+import ShipGlobe from '../components/ShipGlobe.vue'
 import ShipSidebar from '../components/ShipSidebar.vue'
 import {
   SHIPS,
@@ -87,10 +86,8 @@ function openDetail(): void {
       </div>
 
       <div class="tower__canvas">
-        <ShipFleetMap v-if="!selected" :ships="SHIPS" :active-id="selectedId ?? undefined" @select="select" />
-        <template v-else>
-          <ShipRouteChart :ship="selected" />
-          <div class="tower__route-meta">
+        <ShipGlobe :ships="SHIPS" :selected="selected" :height="'560px'" @select="select" />
+        <div v-if="selected" class="tower__route-meta">
             <span>航线里程 <b>{{ routeDistanceNm(selected).toLocaleString('zh-CN') }} nm</b></span>
             <span>挂靠点 <b>{{ selected.route.length }}</b></span>
             <span
@@ -102,7 +99,6 @@ function openDetail(): void {
               {{ ROUTE_POINT_META[t].label }} {{ typeCount?.[t] ?? 0 }}
             </span>
           </div>
-        </template>
       </div>
     </section>
 

@@ -14,6 +14,7 @@
     "@demo/shared-utils": "workspace:*",
     "@demo/ui-package": "workspace:*",
     "echarts": "catalog:",
+    "echarts-gl": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
   },

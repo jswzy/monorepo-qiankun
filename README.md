@@ -240,12 +240,13 @@ monitor.start()   // mounted 时启动
 
 ## 六·六、航运航线监控微应用 `app-ship`（Vue 3 + ECharts）
 
-第四个微应用，做成一座「**航运控制塔**」：
+第四个微应用，做成一座「**航运控制塔**」——地图升级为 **echarts-gl 3D 地球仪**，更具科技感、可连续自转：
 
-- **初始状态 = 全球船队实时位置**：`ShipFleetMap.vue` 在 ECharts geo 世界地图上用 `effectScatter` 标出全部货轮的**当前船位**（按船体色相着色、label 显示船名），只展示位置、不展示完整航线，保持初始视图清爽。
-- **点击 → 航线轨迹图**：点击地图上任意船位标记（或右侧边栏的货轮），主区切换为该船的 `ShipRouteChart.vue` 航线轨迹图（折线 + 6 类挂靠点 + 当前船位涟漪）。
-- **右侧可折叠切换边栏**：`ShipSidebar.vue` 默认展开，列出全部货轮（SVG 照片缩略 + 船名 + 状态 + 当前船位 + 货量），点击切换选中船；顶部把手可**折叠隐藏**，把地图区域最大化；选中态与地图联动高亮。
-- 首页 `ShipControlTower.vue` 把「地图 + 边栏」编排为控制塔；「完整详情」按钮跳转到 `/route/:id` 单船详情页（挂靠点时间轴）。
+- **初始状态 = 全球船队实时位置**：`ShipGlobe.vue` 用 `echarts-gl` 的 `globe` 渲染深空 3D 地球（`globe.viewControl.autoRotate` 连续自转、停手 3s 自动恢复旋转），用 `effectScatter3D` 标出全部货轮的**当前船位**（按船体色相着色、label 显示船名）。初始只展示位置、不展示完整航线，保持地球清爽。
+- **点击 → 航线轨迹图**：点击地球上任意船位标记（或右侧边栏的货轮），主区叠加该船的 3D 航线——`lines3D` **大圆弧**（非平面折线，自动沿地球曲面绘制）+ 6 类挂靠点 `effectScatter3D` + 当前船位涟漪。大圆弧天然规避了跨 180° 经线被画成「横穿欧亚」的问题。
+- **右侧可折叠切换边栏**：`ShipSidebar.vue` 默认展开，列出全部货轮（SVG 照片缩略 + 船名 + 状态 + 当前船位 + 货量），点击切换选中船；顶部把手可**折叠隐藏**，把地球区域最大化；选中态与地球联动高亮。
+- 首页 `ShipControlTower.vue` 把「地球 + 边栏」编排为控制塔；「完整详情」按钮跳转到 `/route/:id` 单船详情页（挂靠点时间轴）。
+- 地球依赖 WebGL；`world.json` 走本地 `public/world.json`（离线可用），路径用 `getPublicPath()` 拼接以适配 qiankun 挂载域。
 
 ### 航线上的 6 类挂靠点
 
@@ -261,16 +262,19 @@ monitor.start()   // mounted 时启动
 | 卸货点 | 中途卸货作业港 | 红 |
 | 终点港口 | 本航次终点港 | 蓝 |
 
-### ECharts 实现要点
+### ECharts / echarts-gl 实现要点
 
-1. **世界地图**：ECharts 5 不再内置地图，先用 `echarts.registerMap('world', geojson)` 注册本地
+1. **3D 地球仪**：`import 'echarts-gl'` 后使用 `globe` 坐标系；`shading: 'lambert'` + `light` 让陆面有明暗体积感，`atmosphere`（大气辉光）+ `postEffect.bloom`（泛光）+ `SSAO` 营造科幻大屏质感，`environment` 设为深空底色。
+2. **连续自转**：`viewControl.autoRotate=true` + `autoRotateSpeed` + `autoRotateAfterStill=3`（停手 3s 后恢复旋转），`damping` 让拖拽手感顺滑。
+3. **世界地图（贴图方案）**：先用 `echarts.registerMap('world', geojson)` 注册本地
    `packages/app-ship/public/world.json`（已精简到 ~400KB，离线可用）。资源路径用
    `getPublicPath()` 拼接，保证被 qiankun 基座挂载时取到的是**子应用自己**的 `world.json`，而不是基座域下的。
-2. **折线航线**：`series.lines` + `polyline: true`，`coords` 依次串联全部挂靠点；叠加 `effect` 光点表达航行方向。
-3. **跨 180° 经线修正**：太平洋航线（如 `ANJI 23` 釜山 → 洛杉矶）在等距圆柱投影下会被画成「横穿欧亚」的直线。
-   `buildSegments()` 检测 `|Δlng| > 180` 的航段并在 ±180° 边界处拆成两段，得到正确的跨太平洋连线。
-4. **聚焦航区**：`geo.boundingCoords` 按航线外接框（含 padding）自动把地图缩放到该船航区；`roam: true` 支持滚轮缩放 / 拖拽。
-5. **当前船位**：`effectScatter` 涟漪标记，与计划航线区分。
+   地球表面不使用 `globe.map` 矢量描边（深蓝配色下大陆几乎不可见），而是把 2D 世界地图用
+   `echarts.init(canvas)` 渲染成 **等距圆柱投影贴图**（`boundingCoords:[[-180,90],[180,-90]]` 保证与 globe 经纬度对齐），
+   作为 `globe.baseTexture` 包到地球表面——大陆轮廓清晰、配色可控、自带明暗体积感。
+4. **大圆弧航线**：`lines3D` + `coordinateSystem:'globe'`，`data` 每段用 `{coords:[起,止]}`；echarts 自动沿地球曲面绘制，**无需**手动做跨 180° 经线拆分；`effect` 叠加流动箭头表达航行方向。
+5. **当前船位**：`effectScatter3D` 涟漪标记（红色描边），与计划航线区分。
+6. **option 构建与视图解耦**：`chart/globeOption.ts` 是纯函数（`buildGlobeBase` / `buildFleetSeries` / `buildRouteSeries`），组件只负责挂载、点击事件、`selected` 切换重绘；便于复用与单测。
 
 ### 数据来源
 
@@ -283,7 +287,7 @@ pnpm dev            # 基座 8000 + 四个微应用并行
 # 或单独启动该微应用：pnpm dev:ship（http://localhost:8004）
 ```
 
-工作台左侧菜单点 **🚢 航运航线监控** → 控制塔首页展示全球船队实时位置 → 点击地图船位标记（或右侧边栏货轮）→ 切换为该船折线航线轨迹图；右侧「收起 ›」可隐藏边栏。
+工作台左侧菜单点 **🚢 航运航线监控** → 控制塔首页地球仪自转、展示全球船队实时位置 → 拖拽地球可手动查看、滚轮缩放 → 点击地球船位标记（或右侧边栏货轮）→ 叠加该船 3D 大圆弧航线轨迹；右侧「收起 ›」可隐藏边栏。
 
 ---
 
